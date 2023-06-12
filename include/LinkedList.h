@@ -1,61 +1,47 @@
-#ifndef LINKEDLIST_H
-#define LINKEDLIST_H
+#ifndef _LinkedList_h_
+#define _LinkedList_h_
 
-template <class T>
 class Node
 {
 public:
-	Node();
+    int info;
+    Node *next;
 
-	void setinfo(T data);
-	void setnext(Node<T>* next);
-	Node* getnext();
-	T getData();
+    Node() {}
+    Node(int data)
+    {
+        info = data;
+        next = nullptr;
+    }
 
-private:
-	T info;
-	Node<T>* next;
+    Node(int data, Node *point)
+    {
+        info = data;
+        next = point;
+    }
+
+    ~Node() {}
 };
-
-template <class T>
 class LinkedList
 {
 public:
-	LinkedList();
-
-	bool isEmpty();
-	bool hasOneElement();
-
-	Node<T>* addToHead(T data);
-	Node<T>* addToTail(T data);
-	Node<T>* add(T data, Node<T>* pred);
-
-	T removeFromTail();
-	T removeFromHead();
-	T remove(Node<T>* pred);
-	T remove(T data);
-	Node<T>* retrive(T data);
-	bool search(T data);
-
-	Node<T>* findprev(Node<T>* node);
-	// Node<T>* findnode(T data);
-
-	void traverse();
-
-	Node<T>* getHead()
-	{
-		return HEAD;
-	}
-
-	Node<T>* getTail()
-	{
-		return TAIL;
-	}
-
-private:
-	Node<T>* HEAD;
-	Node<T>* TAIL;
+    Node *HEAD;
+    Node *TAIL;
+    LinkedList()
+    {
+        HEAD = nullptr;
+        TAIL = nullptr;
+    }
+    bool isEmpty();
+    void add(int data, Node *predecessor);
+    void addToHead(int data);
+    void addToTail(int data);
+    void removeFromHead();
+    void remove(int data);
+    Node *retrive(int data, Node *outputNodePointer);
+    bool search(int data);
+    void traverse();
+    void removeFromTail();
 };
-#include "LinkedList.cpp"
 
-#endif
+#endif // !_LinkedList_h_

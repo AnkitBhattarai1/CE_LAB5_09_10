@@ -1,256 +1,174 @@
-#include <LinkedList.h>
+#include "LinkedList.h"
+
 #include <iostream>
 using namespace std;
 
-template <class T>
-Node<T>::Node()
+bool LinkedList::isEmpty()
 {
+    return HEAD == nullptr;
 }
-
-template <class T>
-void Node<T>::setinfo(T data)
-{ // sets the info of the node
-	this->info = data;
-}
-
-template <class T>
-void Node<T>::setnext(Node<T>* next)
-{ // sets the next pointer to next Node of the Node.
-	this->next = next;
-}
-
-template <class T>
-Node<T>* Node<T>::getnext()
-{ // returns the pointer to the next Node .
-	return next;
-}
-
-template <class T>
-T Node<T>::getData()
-{ // returns the data stored in the node.
-	return info;
-}
-
-/*-----LinkedList------LinkedList--------*/
-template <class T>
-LinkedList<T>::LinkedList()
-{ // Initializes an empty LinkedList.
-	HEAD = NULL;
-}
-
-template <class T>
-bool LinkedList<T>::isEmpty()
-{ // checks if the LinkedList is empty or not.
-	if (HEAD == NULL)
-		return true;
-	else
-		return false;
-}
-
-template <class T>
-bool LinkedList<T>::hasOneElement()
-{ // checks if the LinkedList has only one element.
-	if (HEAD == TAIL)
-		return true;
-	else
-		return false;
-}
-
-// adds a node to the head of the LinkedList
-template <class T>
-Node<T>* LinkedList<T>::addToHead(T data)
+void LinkedList::addToHead(int data)
 {
-	Node<T>* newnode = new Node<T>();
-	newnode->setinfo(data);
-
-	// sets the HEAD and TAIL to the new Node added. And,the next element of the only node to null
-	if (isEmpty())
-	{
-		HEAD = newnode;
-		TAIL = newnode;
-		newnode->setnext(NULL);
-	}
-
-	// if the list is not empty , set the next of newnode to the HEAD then  the HEAD to the newnode
-	else
-	{
-		newnode->setnext(HEAD);
-		HEAD = newnode;
-	}
-	return newnode;
+    Node *newNode = new Node(data);
+    newNode->next = HEAD;
+    if (isEmpty())
+    {
+        HEAD = newNode;
+        TAIL = newNode;
+    }
+    else
+        HEAD = newNode;
 }
 
-// adds a newnode to the Tail of the LinkedList.
-template <class T>
-Node<T>* LinkedList<T>::addToTail(T data)
+void LinkedList::addToTail(int data)
 {
-	Node<T>* newnode = new Node<T>();
-	newnode->setinfo(data);
-
-	// if the list is empty, sets the HEAD and TAIL to the newnode i.e, newly added NOde
-	if (isEmpty())
-	{
-		HEAD = newnode;
-		TAIL = newnode;
-		newnode->setnext(NULL);
-	}
-	// if the list is not empty, sets the next of newnode to NULL, next of present TAIL to newnode and TAIL to newnode
-	else
-	{
-		newnode->setnext(NULL);
-		this->TAIL->setnext(newnode);
-		TAIL = newnode;
-	}
-	return newnode;
+    Node *newNode = new Node(data);
+    newNode->next = NULL;
+    if (isEmpty())
+    {
+        HEAD = newNode;
+        TAIL = newNode;
+    }
+    else
+    {
+        TAIL->next = newNode;
+        TAIL = newNode;
+    }
+}
+void LinkedList::add(int data, Node *predecessor)
+{
+    Node *newNode = new Node(data);
+    newNode->next = predecessor->next;
+    predecessor->next = newNode;
+}
+void LinkedList::removeFromHead()
+{
+    if (!isEmpty())
+    {
+        if (!isEmpty())
+        {
+            if (HEAD == TAIL)
+            {
+                HEAD = TAIL = NULL;
+            }
+            else
+            {
+                Node *nodeToDelete = new Node();
+                nodeToDelete = HEAD;
+                HEAD = nodeToDelete->next;
+                delete nodeToDelete;
+            }
+        }
+    }
 }
 
-template <class T>
-Node<T>* LinkedList<T>::add(T data, Node<T>* node)
+void LinkedList::remove(int data)
 {
+    if (!isEmpty())
+    {
+        if (HEAD->info == data)
+        {
+            removeFromHead();
+        }
+        else
+        {
+            Node *temp = HEAD->next;
+            Node *prev = HEAD;
+            while (temp != nullptr)
+            {
 
-	Node<T>* newnode = new Node<T>();
-	newnode->setinfo(data);
+                if (temp->info == data)
+                {
+                    prev->next = temp->next;
+                    temp = temp->next;
 
-	if (node == TAIL)
-		return addToTail(data);
+                    if (temp == TAIL)
+                    {
+                        TAIL = prev;
+                        TAIL->next = nullptr;
+                    }
+                }
+                else
+                {
+                    prev = prev->next;
+                    temp = temp->next;
+                }
+            }
+        }
+    }
+    else
+    {
+        cout << "list is empty" << endl;
+    }
+}
+void LinkedList ::removeFromTail()
+{
+    if (!isEmpty())
+    {
 
-	else if (node == HEAD)
-	{
-		newnode->setnext(HEAD->getnext());
-		HEAD->setnext(newnode);
-		return newnode;
-	}
+        if (HEAD == TAIL)
+        {
+            HEAD = TAIL = NULL;
+        }
+        else
+        {
+            Node *nodeToDelete = new Node();
+            nodeToDelete = TAIL;
+            Node *temp = new Node();
+            temp = HEAD;
+            while (temp->next != TAIL)
+            {
+                temp = temp->next;
+            }
 
-	else
-	{
-		newnode->setnext(node->getnext());
-		node->setnext(newnode);
-		return newnode;
-	}
+            TAIL = temp;
+            TAIL->next = NULL;
+            delete nodeToDelete;
+        }
+    }
+}
+Node *LinkedList::retrive(int data, Node *outputNodePointer)
+{
+    outputNodePointer = HEAD;
+    while (outputNodePointer != NULL && outputNodePointer->info != data)
+    {
+        outputNodePointer = outputNodePointer->next;
+    }
+    return outputNodePointer;
 }
 
-template <class T>
-T LinkedList<T>::removeFromHead()
+bool LinkedList::search(int data)
 {
-	if (isEmpty())
-	{
-		cout << "The List is empty nothing to remove\n";
-	}
-
-	else
-	{
-		Node<T>* nodeToDelete = new Node<T>();
-		nodeToDelete = HEAD;
-		T data = nodeToDelete->getData();
-
-		if (hasOneElement())
-			HEAD = NULL;
-		else
-			HEAD = HEAD->getnext();
-		delete nodeToDelete;
-		return data;
-	}
+    if (!isEmpty())
+    {
+        Node *search = HEAD;
+        while (search != NULL && search->info != data)
+        {
+            search = search->next;
+        }
+        return (search != NULL);
+    }
+    return false;
 }
 
-template <class T>
-T LinkedList<T>::removeFromTail()
+void LinkedList::traverse()
 {
-	if (isEmpty())
-	{
-		cout << "There is nothing to remove from the list" << endl;
-	}
-	else
-	{
-		Node<T>* nodeToDelete = TAIL;
-		T data = TAIL->getData();
-		if (hasOneElement())
-			HEAD = NULL;
+    if (isEmpty())
+    {
+        cout << "List is empty" << endl;
+        return;
+    }
 
-		else
-		{
-			Node<T>* temp;
-			temp = findprev(TAIL);
-			TAIL = temp;
-			temp->setnext(NULL);
-			delete nodeToDelete;
-			return data;
-		}
-	}
-}
+    else
+    {
+        Node *print = HEAD;
 
-template <class T>
-T LinkedList<T>::remove(Node<T>* node)
-{
+        while (print != NULL)
+        {
+            cout << print->info << "->";
+            print = print->next;
+        }
+    }
 
-	if (node == HEAD)
-		return removeFromHead();
-	else if (node == TAIL)
-		return removeFromTail();
-
-	else
-	{
-		Node<T>* nodeToDelete = node;
-		T data = nodeToDelete->getData();
-
-		Node<T>* prev = findprev(node);
-
-		prev->setnext(nodeToDelete->getnext());
-
-		delete nodeToDelete;
-		return data;
-	}
-}
-
-template <class T>
-T LinkedList<T>::remove(T data)
-{
-	Node<T>* nodeToDelete = retrive(data);
-
-	return remove(nodeToDelete);
-}
-
-template <class T>
-void LinkedList<T>::traverse()
-{
-	Node<T>* temp = HEAD;
-
-	while (temp != NULL)
-	{
-		cout << temp->getData() << endl;
-		temp = temp->getnext();
-	}
-}
-
-template <class T>
-Node<T>* LinkedList<T>::findprev(Node<T>* node)
-{
-	Node<T>* temp = HEAD;
-
-	while ((temp->getnext()) != node)
-	{
-		temp = temp->getnext();
-	}
-	return temp;
-}
-
-template <class T>
-Node<T>* LinkedList<T>::retrive(T data)
-{
-
-	for (Node<T>* temp = HEAD; temp != NULL; temp = temp->getnext())
-	{
-		if (temp->getData() == data)
-			return temp;
-	}
-
-	return NULL;
-}
-
-template <class T>
-bool LinkedList<T>::search(T data)
-{
-	if ((retrive(data)) != NULL)
-		return true;
-	else
-		return false;
+    cout << endl;
 }
