@@ -10,6 +10,13 @@ GraphWithList::GraphWithList(bool isDirected)
 {
   this->Directed = isDirected;
 }
+GraphWithList::~GraphWithList()
+{
+  for (int i = 0; i < v.size(); i++)
+  {
+    delete v[i];
+  }
+}
 bool GraphWithList ::isDirected()
 {
   return Directed;
@@ -116,4 +123,132 @@ void GraphWithList ::removeEdge(int vertex1, int vertex2)
     }
   }
 }
+int GraphWithList ::noOfVertices()
+{
+  return v.size();
+}
+int GraphWithList ::noOfEdges()
+{
+  int edgeCount = 0;
+  for (int i = 0; i < v.size(); i++)
+  {
+    Node *current = l[i].HEAD;
+    while (current != nullptr)
+    {
+      edgeCount++;
+      current = current->next;
+    }
+  }
+  if (!isDirected())
+  {
+    edgeCount /= 2;
+  }
 
+  return edgeCount;
+}
+int GraphWithList ::outDegree(int vertex)
+{
+  if (isDirected())
+  {
+    int outCount = 0;
+    for (int i = 0; i < v.size(); i++)
+    {
+
+      if (v[i]->info == vertex)
+      {
+        Node *current = l[i].HEAD;
+        while (current != nullptr)
+        {
+          outCount++;
+          current = current->next;
+        }
+        break;
+      }
+    }
+    return outCount;
+  }
+  else
+    return degree(vertex);
+}
+int GraphWithList ::inDegree(int vertex)
+{
+  if (isDirected())
+  {
+    int inCount = 0;
+
+    for (int i = 0; i < v.size(); i++)
+    {
+      Node *current = l[i].HEAD;
+      while (current != nullptr)
+      {
+        if (current->info == vertex)
+        {
+          inCount++;
+        }
+        current = current->next;
+      }
+    }
+    return inCount;
+  }
+  else
+    return degree(vertex);
+}
+int GraphWithList ::degree(int vertex)
+{
+  if (isDirected())
+  {
+    return (inDegree(vertex) + outDegree(vertex));
+  }
+
+  else
+  {
+    int degCount = 0;
+
+    for (int i = 0; i < v.size(); i++)
+    {
+      if (v[i]->info == vertex)
+      {
+        Node *current = l[i].HEAD;
+        while (current != nullptr)
+        {
+          degCount++;
+
+          current = current->next;
+        }
+        break;
+      }
+    }
+    return degCount;
+  }
+}
+void GraphWithList ::neighbours(int vertex)
+{
+  for (int i = 0; i < v.size(); i++)
+  {
+    if (v[i]->info == vertex)
+    {
+      l[i].traverse();
+      break;
+    }
+  }
+}
+bool GraphWithList ::isNeighbour(int vertex1, int vertex2)
+{
+  for (int i = 0; i < v.size(); i++)
+  {
+    if (v[i]->info == vertex1)
+    {
+      Node *current = l[i].HEAD;
+      while (current != nullptr)
+      {
+        if (current->info == vertex2)
+        {
+          return true;
+        }
+        current = current->next;
+      }
+      break;
+    }
+  }
+  return false;
+}
